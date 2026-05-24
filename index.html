@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ITMO | Space Race: 25 Milestones</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-deep: #050508;
+      --bg-panel: rgba(20, 20, 25, 0.65);
+      --itmo-orange: #ff4500;
+      --neon-blue: #00f3ff;
+      --neon-red: #ff2a2a;
+      --text-main: #e0e0e0;
+      --text-dim: #8b9bb4;
+      --glass-border: rgba(255, 255, 255, 0.1);
+      --font-head: 'Orbitron', sans-serif;
+      --font-body: 'Rajdhani', sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--bg-deep);
+      color: var(--text-main);
+      font-family: var(--font-body);
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    /* Animated Stars Background */
+    .stars {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      z-index: -1;
+      background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
+    }
+    .stars::after {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; width: 2px; height: 2px;
+      background: white;
+      box-shadow: 
+        10vw 20vh #fff, 20vw 80vh #fff, 40vw 40vh #fff, 
+        60vw 10vh #fff, 80vw 60vh #fff, 90vw 90vh #fff,
+        15vw 50vh #fff, 35vw 15vh #fff, 55vw 85vh #fff,
+        75vw 35vh #fff, 95vw 5vh #fff;
+      animation: animStar 50s linear infinite;
+      opacity: 0.5;
+    }
+    @keyframes animStar { from { transform: translateY(0px); } to { transform: translateY(-2000px); } }
+
+    /* Header */
+    header {
+      text-align: center;
+      padding: 4rem 1rem;
+      border-bottom: 1px solid var(--glass-border);
+      background: linear-gradient(180deg, rgba(0,0,0,0.9) 0%, transparent 100%);
+    }
+    .itmo-badge {
+      display: inline-block;
+      font-family: var(--font-head);
+      font-weight: 900;
+      font-size: 1.2rem;
+      color: var(--itmo-orange);
+      letter-spacing: 2px;
+      margin-bottom: 1rem;
+      border: 1px solid var(--itmo-orange);
+      padding: 5px 15px;
+      box-shadow: 0 0 10px rgba(255, 69, 0, 0.3);
+    }
+    h1 {
+      font-family: var(--font-head);
+      font-size: clamp(2rem, 5vw, 4rem);
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+      color: #fff;
+      text-shadow: 0 0 20px rgba(0, 243, 255, 0.5);
+      position: relative;
+      display: inline-block;
+    }
+    /* Glitch Effect */
+    h1::before, h1::after {
+      content: attr(data-text);
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      background: var(--bg-deep);
+    }
+    h1::before { left: 2px; text-shadow: -1px 0 var(--neon-red); clip: rect(24px, 550px, 90px, 0); animation: glitch-anim-2 3s infinite linear alternate-reverse; }
+    h1::after { left: -2px; text-shadow: -1px 0 var(--neon-blue); clip: rect(85px, 550px, 140px, 0); animation: glitch-anim 2.5s infinite linear alternate-reverse; }
+    @keyframes glitch-anim { 0% { clip: rect(10px, 9999px, 30px, 0); } 20% { clip: rect(80px, 9999px, 100px, 0); } 40% { clip: rect(10px, 9999px, 50px, 0); } 60% { clip: rect(40px, 9999px, 80px, 0); } 80% { clip: rect(90px, 9999px, 100px, 0); } 100% { clip: rect(20px, 9999px, 60px, 0); } }
+    @keyframes glitch-anim-2 { 0% { clip: rect(60px, 9999px, 90px, 0); } 20% { clip: rect(10px, 9999px, 40px, 0); } 40% { clip: rect(80px, 9999px, 100px, 0); } 60% { clip: rect(30px, 9999px, 60px, 0); } 80% { clip: rect(70px, 9999px, 90px, 0); } 100% { clip: rect(20px, 9999px, 50px, 0); } }
+
+    .subtitle { font-size: 1.2rem; color: var(--text-dim); max-width: 600px; margin: 0 auto; }
+
+    /* Timeline */
+    .timeline { position: relative; max-width: 1000px; margin: 4rem auto; padding: 0 20px; }
+    .timeline::before {
+      content: ''; position: absolute; left: 50%; top: 0; bottom: 0; width: 2px;
+      background: linear-gradient(to bottom, transparent, var(--neon-blue), transparent);
+      transform: translateX(-50%); box-shadow: 0 0 15px var(--neon-blue);
+    }
+
+    .event {
+      position: relative; width: 50%; padding: 20px 40px; margin-bottom: 3rem;
+      opacity: 0; transform: translateY(50px) scale(0.95);
+      transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .event.visible { opacity: 1; transform: translateY(0) scale(1); }
+    .event:nth-child(odd) { left: 0; text-align: right; }
+    .event:nth-child(even) { left: 50%; text-align: left; }
+
+    .card-content {
+      background: var(--bg-panel); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+      border: 1px solid var(--glass-border); padding: 1.5rem; border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5); transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .card-content:hover { transform: translateY(-5px); box-shadow: 0 15px 40px rgba(0, 243, 255, 0.1); border-color: rgba(255, 255, 255, 0.3); }
+
+    .event::after {
+      content: ''; position: absolute; top: 25px; width: 16px; height: 16px;
+      background: var(--bg-deep); border: 2px solid var(--neon-blue); border-radius: 50%;
+      box-shadow: 0 0 10px var(--neon-blue); z-index: 2;
+    }
+    .event:nth-child(odd)::after { right: -8px; }
+    .event:nth-child(even)::after { left: -8px; }
+
+    .badge {
+      display: inline-block; font-family: var(--font-head); font-size: 0.7rem; font-weight: 700;
+      padding: 4px 8px; border-radius: 4px; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 1px;
+    }
+    .badge.ussr { background: rgba(255, 42, 42, 0.2); color: var(--neon-red); border: 1px solid var(--neon-red); box-shadow: 0 0 5px var(--neon-red); }
+    .badge.usa { background: rgba(0, 243, 255, 0.2); color: var(--neon-blue); border: 1px solid var(--neon-blue); box-shadow: 0 0 5px var(--neon-blue); }
+    .badge.joint { background: rgba(255, 165, 0, 0.2); color: #ffa500; border: 1px solid #ffa500; box-shadow: 0 0 5px #ffa500; }
+
+    .date { font-family: var(--font-head); color: var(--itmo-orange); font-weight: 700; margin-bottom: 0.5rem; font-size: 1.1rem; }
+    h2 { font-family: var(--font-head); font-size: 1.5rem; margin-bottom: 0.8rem; color: #fff; }
+    p { color: var(--text-dim); font-size: 1rem; margin-bottom: 1rem; }
+
+    .media-grid { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 1rem; }
+    img, video, iframe { width: 100%; border-radius: 6px; border: 1px solid var(--glass-border); transition: filter 0.3s; }
+    img:hover, video:hover { filter: brightness(1.2); }
+    audio { width: 100%; height: 35px; margin-top: 5px; filter: invert(1) hue-rotate(180deg); }
+
+    footer { text-align: center; padding: 3rem; color: var(--text-dim); font-size: 0.9rem; border-top: 1px solid var(--glass-border); background: #000; }
+    footer a { color: var(--itmo-orange); text-decoration: none; }
+
+    @media (max-width: 768px) {
+      .timeline::before { left: 20px; }
+      .event { width: 100%; padding-left: 50px; padding-right: 10px; text-align: left; }
+      .event:nth-child(odd) { left: 0; text-align: left; }
+      .event:nth-child(even) { left: 0; }
+      .event::after { left: 12px !important; right: auto; }
+    }
+  </style>
+</head>
+<body>
+  <div class="stars"></div>
+  <header>
+    <div class="itmo-badge">ITMO UNIVERSITY</div>
+    <h1 data-text="SPACE RACE: 25 MILESTONES">SPACE RACE: 25 MILESTONES</h1>
+    <p class="subtitle">Полная хроника космической эры: от Спутника до МКС<br>Проект по дисциплине «История России и мира в ХХ веке»</p>
+  </header>
+
+  <main class="timeline">
+    
+    <!-- 1. Спутник-1 -->
+    <article class="event ussr">
+      <div class="card-content">
+        <span class="badge ussr">USSR</span>
+        <div class="date">04.10.1957</div>
+        <h2>Спутник-1</h2>
+        <p>Начало космической эры. Первый искусственный спутник Земли.</p>
+        <div class="media-grid">
+          <img src="img/sputnik1.jpg" alt="Спутник-1" loading="lazy">
+          <audio controls src="audio/sputnik_signal.mp3"></audio>
+        </div>
+      </div>
+    </article>
+
+    <!-- 2. Лайка -->
+    <article class="event ussr">
+      <div class="card-content">
+        <span class="badge ussr">USSR</span>
+        <div class="date">03.11.1957</div>
+        <h2>Собака Лайка</h2>
+        <p>Первое живое существо на орбите. Доказательство возможности биополетов.</p>
+        <div class="media-grid">
+          <img src="img/laika.jpg" alt="Лайка" loading="lazy">
+        </div>
+      </div>
+    </article>
+
+    <!-- 3. Эксплорер-1 -->
+    <article class="event usa">
+      <div class="card-content">
+        <span class="badge usa">USA</span>
+        <div class="date">31.01.1958</div>
+        <h2>Эксплорер-1</h2>
+        <p>Ответ США. Первый американский спутник. Открытие поясов Ван Аллена.</p>
+        <div class="media-grid">
+          <img src="img/explorer1.jpg" alt="Эксплорер-1" loading="lazy">
+        </div>
+      </div>
+    </article>
+
+    <!-- 4. НАСА -->
+    <article class="event usa">
+      <div class="card-content">
+        <span class="badge usa">USA</span>
+        <div class="date">29.07.1958</div>
+        <h2>Создание NASA</h2>
+        <p>Основание Национального управления по аэронавтике и исследованию космического пространства.</p>
+        <div class="media-grid">
+          <img src="img/nasa_logo.jpg" alt="Логотип NASA" loading="lazy">
+        </div>
+      </div>
+    </article>
+
+    <!-- 5. Луна-3 -->
+    <article class="event ussr">
+      <div class="card-content">
+        <span class="badge ussr">USSR</span>
+        <div class="date">07.10.1959</div>
+        <h2>Луна-3</h2>
+        <p>Первые фотографии обратной стороны Луны. Мир увидел невидимое.</p>
+        <div class="media-grid">
+          <img src="img/moon_back.jpg" alt="Обратная сторона Луны" loading="lazy">
+        </div>
+      </div>
+    </article>
+
+    <!-- 6. Гагарин -->
+    <article class="event ussr">
+      <div class="card-content">
+        <span class="badge ussr">USSR</span>
+        <div class="date">12.04.1961</div>
+        <h2>Юрий Гагарин</h2>
+        <p>«Поехали!» Первый человек в космосе. Полет длился 108 минут.</p>
+        <div class="media-grid">
+          <img src="img/gagarin.jpg" alt="Гагарин" loading="lazy">
+          <audio controls src="audio/gagarin_poyekhali.mp3"></audio>
+        </div>
+      </div>
+    </article>
+
+    <!-- 7. Шепард -->
+    <article class="event usa">
+      <div class="card-content">
+        <span class="badge usa">USA</span>
+        <div class="date">05.05.1961</div>
+        <h2>Алан Шепард</h2>
+        <p>Первый американец в космосе. Суборбитальный полет на Freedom 7.</p>
+        <div class="media-grid">
+          <img src="img/shepard.jpg" alt="Шепард" loading="lazy">
+        </div>
+      </div>
+    </article>
+
+    <!-- 8. Трагедия Аполлона-1 -->
+    <article class="event usa">
+      <div class="card-content">
+        <span class="badge usa">USA</span>
+        <div class="date">27.01.1967</div>
+        <h2>Пожар Аполлона-1</h2>
+        <p>Гибель экипажа (Гриссом, Уайт, Чаффи) на стартовом столе. Пауза и пересмотр безопасности.</p>
+        <div class="media-grid">
+          <img src="img/apollo1_crew.jpg" alt="Экипаж Аполлона-1" loading="lazy">
+        </div>
+      </div>
+    </article>
+
+    <!-- 9. Терешкова -->
+    <article class="event ussr">
+      <div class="card-content">
+        <span class="badge ussr">USSR</span>
+        <div class="date">16.06.1963</div>
+        <h2>Валентина Терешкова</h2>
+        <p>Первая женщина-космонавт. Полет на Восток-6.</p>
+        <div class="media-grid">
+          <img src="img/tereshkova.jpg" alt="Терешкова" loading="lazy">
+        </div>
+      </div>
+    </article>
+
+    <!-- 10. Леонов -->
+    <article class="event ussr">
+      <div class="card-content">
+        <span class="badge ussr">USSR</span>
+        <div class="date">18.03.1965</div>
+        <h2>Алексей Леонов</h2>
+        <p>Первый выход человека в открытый космос. 12 минут вне корабля.</p>
+        <div class="media-grid">
+          <img src="img/leonov.jpg" alt="Леонов" loading="lazy">
+          <audio controls src="audio/leonov_radio.mp3"></audio>
+        </div>
+      </div>
+    </article>
+
+    <!-- 11. Венера-7 -->
+    <article class="event ussr">
+      <div class="card-content">
+        <span class="badge ussr">USSR</span>
+        <div class="date">15.12.1970</div>
+        <h2>Венера-7</h2>
+        <p>Первая мягкая посадка на Венеру и передача данных с поверхности другой планеты.</p>
+        <div class="media-grid">
+          <img src="img/venera7.jpg" alt="Венера-7" loading="lazy">
+        </div>
+      </div>
+    </article>
+
+    <!-- 12. Аполлон-11 -->
+    <article class="event usa">
+      <div class="card-content">
+        <span class="badge usa">USA</span>
+        <div class="date">20.07.1969</div>
+        <h2>Аполлон-11</h2>
+        <p>Высадка на Луну. Нил Армстронг ступает на лунную поверхность.</p>
+        <div class="media-grid">
+          <img src="img/armstrong.jpg" alt="Армстронг" loading="lazy">
+          <video controls preload="metadata" poster="img/armstrong.jpg">
+  <source src="video/apollo11.mp4" type="video/mp4">
+  Ваш браузер не поддерживает видео.
+</video>
+        </div>
+      </div>
+    </article>
+
+    <!-- 13. Луноход-1 -->
+    <article class="event ussr">
+      <div class="card-content">
+        <span class="badge ussr">USSR</span>
+        <div class="date">17.11.1970</div>
+        <h2>Луноход-1</h2>
+        <p>Первый в мире планетоход. Управлялся с Земли дистанционно.</p>
+        <div class="media-grid">
+          <img src="img/lunokhod.jpg" alt="Луноход-1" loading="lazy">
+        </div>
+      </div>
+    </article>
+
+    <!-- 14. Салют-1 -->
+    <article class="event ussr">
+      <div class="card-content">
+        <span class="badge ussr">USSR</span>
+        <div class="date">19.04.1971</div>
+        <h2>Салют-1</h2>
+        <p>Первая в мире орбитальная станция. Начало эры долговременных полетов.</p>
+        <div class="media-grid">
+          <img src="img/salyut1.jpg" alt="Салют-1" loading="lazy">
+        </div>
+      </div>
+    </article>
+
+    <!-- 15. Скайлэб -->
+    <article class="event usa">
+      <div class="card-content">
+        <span class="badge usa">USA</span>
+        <div class="date">14.05.1973</div>
+        <h2>Скайлэб</h2>
+        <p>Первая американская орбитальная станция. Рекорды пребывания в космосе.</p>
+        <div class="media-grid">
+          <img src="img/skylab.jpg" alt="Скайлэб" loading="lazy">
+        </div>
+      </div>
+    </article>
+
+    <!-- 16. Союз-Аполлон -->
+    <article class="event joint">
+      <div class="card-content">
+        <span class="badge joint">JOINT</span>
+        <div class="date">15.07.1975</div>
+        <h2>ЭПАС «Союз-Аполлон»</h2>
+        <p>Первая международная стыковка. Рукопожатие Леонова и Стаффорда.</p>
+        <div class="media-grid">
+          <img src="img/soyuz_apollo.jpg" alt="Стыковка" loading="lazy">
+        </div>
+      </div>
+    </article>
+
+    <!-- 17. Вояджер-1 -->
+    <article class="event usa">
+      <div class="card-content">
+        <span class="badge usa">USA</span>
+        <div class="date">05.09.1977</div>
+        <h2>Вояджер-1</h2>
+        <p>Запуск автоматической межпланетной станции. Несет «Золотую пластинку» с посланием инопланетянам.</p>
+        <div class="media-grid">
+          <img src="img/voyager.jpg" alt="Вояджер" loading="lazy">
+        </div>
+      </div>
+    </article>
+
+    <!-- 18. Вега-Галлей -->
+    <article class="event ussr">
+      <div class="card-content">
+        <span class="badge ussr">USSR</span>
+        <div class="date">1986</div>
+        <h2>Комета Галлея</h2>
+        <p>Советские аппараты «Вега-1» и «Вега-2» впервые изучили ядро кометы изнутри.</p>
+        <div class="media-grid">
+          <img src="img/halley.jpg" alt="Комета Галлея" loading="lazy">
+        </div>
+      </div>
+    </article>
+
+    <!-- 19. Колумбия -->
+    <article class="event usa">
+      <div class="card-content">
+        <span class="badge usa">USA</span>
+        <div class="date">12.04.1981</div>
+        <h2>Space Shuttle Columbia</h2>
+        <p>Первый полет многоразового корабля. Новая эра транспортировки.</p>
+        <div class="media-grid">
+          <img src="img/columbia.jpg" alt="Колумбия" loading="lazy">
+        </div>
+      </div>
+    </article>
+
+    <!-- 20. Станция Мир -->
+    <article class="event ussr">
+      <div class="card-content">
+        <span class="badge ussr">USSR</span>
+        <div class="date">20.02.1986</div>
+        <h2>Станция «Мир»</h2>
+        <p>Запуск базового блока. Первая модульная станция. Рекорд долголетия.</p>
+        <div class="media-grid">
+          <img src="img/mir.jpg" alt="Мир" loading="lazy">
+        </div>
+      </div>
+    </article>
+
+    <!-- 21. Фобос-Грунт (Марс) -->
+    <article class="event ussr">
+      <div class="card-content">
+        <span class="badge ussr">USSR</span>
+        <div class="date">1988</div>
+        <h2>Фобос-2</h2>
+        <p>Успешное достижение Марса. Передача снимков спутника Фобос перед потерей связи.</p>
+        <div class="media-grid">
+          <img src="img/phobos.jpg" alt="Фобос" loading="lazy">
+        </div>
+      </div>
+    </article>
+
+    <!-- 22. Телескоп Хаббл -->
+    <article class="event usa">
+      <div class="card-content">
+        <span class="badge usa">USA</span>
+        <div class="date">24.04.1990</div>
+        <h2>Хаббл</h2>
+        <p>Запуск орбитального телескопа. Революция в астрономии.</p>
+        <div class="media-grid">
+          <img src="img/hubble.jpg" alt="Хаббл" loading="lazy">
+        </div>
+      </div>
+    </article>
+
+    <!-- 23. Шаттл-Мир -->
+    <article class="event joint">
+      <div class="card-content">
+        <span class="badge joint">JOINT</span>
+        <div class="date">1994–1998</div>
+        <h2>Программа «Шаттл-Мир»</h2>
+        <p>Регулярные полеты шаттлов к российской станции. Подготовка к МКС.</p>
+        <div class="media-grid">
+          <img src="img/shuttle_mir.jpg" alt="Шаттл у Мира" loading="lazy">
+        </div>
+      </div>
+    </article>
+
+    <!-- 24. Заря (МКС) -->
+    <article class="event joint">
+      <div class="card-content">
+        <span class="badge joint">ISS</span>
+        <div class="date">20.11.1998</div>
+        <h2>Модуль «Заря»</h2>
+        <p>Первый модуль МКС. Начало сборки международной станции.</p>
+        <div class="media-grid">
+          <img src="img/zarya.jpg" alt="Заря" loading="lazy">
+        </div>
+      </div>
+    </article>
+
+    <!-- 25. Первый экипаж МКС -->
+    <article class="event joint">
+      <div class="card-content">
+        <span class="badge joint">ISS</span>
+        <div class="date">02.11.2000</div>
+        <h2>Expedition 1</h2>
+        <p>Прибытие первого постоянного экипажа на МКС. Космос стал домом.</p>
+        <div class="media-grid">
+          <img src="img/expedition1.jpg" alt="Экипаж МКС" loading="lazy">
+        </div>
+      </div>
+    </article>
+
+  </main>
+
+  <footer>
+    <p>Developed by <strong>ITMO Students: Borisov S. Kudashova P. Bolotinsky M. Tokan I.</strong> | Semester 2 Project Work, 2026</p>
+    <p style="font-size: 0.8em; opacity: 0.6;">Data sources: NASA Public Archive, Wikimedia Commons, Roscosmos</p>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.15 });
+
+      document.querySelectorAll('.event').forEach(el => observer.observe(el));
+
+      document.querySelectorAll('img, audio, video').forEach(media => {
+        media.addEventListener('error', () => {
+          const fallback = document.createElement('div');
+          fallback.style.padding = '10px';
+          fallback.style.background = '#111';
+          fallback.style.color = '#ff4500';
+          fallback.style.border = '1px dashed #333';
+          fallback.textContent = '[DATA LINK ERROR]';
+          media.parentNode.replaceChild(fallback, media);
+        });
+      });
+    });
+  </script>
+</body>
+</html>
