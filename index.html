@@ -154,6 +154,98 @@
       .event:nth-child(even) { left: 0; }
       .event::after { left: 12px !important; right: auto; }
     }
+    /* --- КАСТОМНЫЙ СКРОЛЛБАР --- */
+    
+    /* Ширина полосы */
+    ::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    /* Фон полосы (трек) */
+    ::-webkit-scrollbar-track {
+      background: var(--bg-deep); 
+    }
+
+    /* Ползунок (сам бегунок) */
+    ::-webkit-scrollbar-thumb {
+      background: var(--itmo-orange); /* Оранжевый цвет ИТМО */
+      border-radius: 5px;
+      border: 2px solid var(--bg-deep); /* Отступ от краев */
+    }
+
+    /* Ползунок при наведении */
+    ::-webkit-scrollbar-thumb:hover {
+      background: #ff6b35; /* Чуть светлее при наведении */
+      cursor: grab;
+    }
+
+    /* Ползунок при нажатии (когда тянешь) */
+    ::-webkit-scrollbar-thumb:active {
+      background: #fff;
+      cursor: grabbing;
+    }
+    /* Делаем линию интерактивной */
+    .timeline {
+      cursor: grab; /* Курсор-ладошка */
+      user-select: none; /* Чтобы текст не выделялся при тяге */
+    }
+    
+    .timeline:active {
+      cursor: grabbing; /* Курсор-сжатая ладошка */
+    }
+    /* --- МОБИЛЬНАЯ АДАПТАЦИЯ --- */
+    @media (max-width: 768px) {
+      
+      /* 1. Линия времени смещается влево */
+      .timeline::before {
+        left: 20px; /* Линия теперь у самого края */
+      }
+
+      /* 2. Все карточки занимают 100% ширины и сдвигаются вправо */
+      .event {
+        width: 100%;
+        padding-left: 50px; /* Отступ от линии слева */
+        padding-right: 15px;
+        margin-bottom: 2rem;
+      }
+
+      /* Сбрасываем шахматный порядок */
+      .event:nth-child(odd), 
+      .event:nth-child(even) {
+        left: 0;
+        text-align: left; /* Весь текст выравниваем по левому краю */
+      }
+
+      /* 3. Точки на линии тоже сдвигаем */
+      .event::after {
+        left: 12px !important; /* Точка всегда слева на линии */
+        right: auto;
+      }
+
+      /* 4. Убираем Drag-to-Scroll на тач-устройствах */
+      .timeline {
+        cursor: default;
+        touch-action: pan-y; /* Разрешаем стандартный скролл браузера */
+      }
+
+      /* 5. Делаем медиа-контент удобнее для пальцев */
+      .media-grid {
+        grid-template-columns: 1fr; /* Картинки и аудио друг под другом */
+      }
+      
+      audio {
+        height: 50px; /* Аудиоплеер выше, чтобы легче нажать Play */
+      }
+
+      h1 {
+        font-size: 2rem; /* Заголовок чуть меньше */
+      }
+      
+      .subtitle {
+        font-size: 1rem;
+        padding: 0 10px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -507,17 +599,49 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
+      
+      // 1. Анимация появления (Intersection Observer)
       const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
           if (entry.isIntersecting) {
             entry.target.classList.add('visible');
-            observer.unobserve(entry.target);
           }
         });
-      }, { threshold: 0.15 });
+      }, { threshold: 0.1 });
 
       document.querySelectorAll('.event').forEach(el => observer.observe(el));
 
+      // 2. Drag to Scroll (ТОЛЬКО для десктопа)
+      // Проверяем, нет ли тач-экрана
+      const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+
+      if (!isTouchDevice) {
+        const slider = document.querySelector('.timeline');
+        let isDown = false;
+        let startY;
+        
+        slider.addEventListener('mousedown', (e) => {
+          isDown = true;
+          startY = e.pageY - slider.offsetTop;
+          slider.style.cursor = 'grabbing';
+        });
+
+        slider.addEventListener('mouseleave', () => { isDown = false; slider.style.cursor = 'grab'; });
+        slider.addEventListener('mouseup', () => { isDown = false; slider.style.cursor = 'grab'; });
+
+        slider.addEventListener('mousemove', (e) => {
+          if (!isDown) return;
+          e.preventDefault();
+          const y = e.pageY - slider.offsetTop;
+          const walk = (y - startY) * 2; 
+          window.scrollBy(0, -walk);
+        });
+      } else {
+        // Если тач-устройство, убеждаемся, что курсор обычный
+        document.querySelector('.timeline').style.cursor = 'default';
+      }
+
+      // 3. Fallback для ошибок медиа
       document.querySelectorAll('img, audio, video').forEach(media => {
         media.addEventListener('error', () => {
           const fallback = document.createElement('div');
@@ -525,7 +649,7 @@
           fallback.style.background = '#111';
           fallback.style.color = '#ff4500';
           fallback.style.border = '1px dashed #333';
-          fallback.textContent = '[DATA LINK ERROR]';
+          fallback.textContent = '[MEDIA ERROR]';
           media.parentNode.replaceChild(fallback, media);
         });
       });
